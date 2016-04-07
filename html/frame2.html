@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<title>Activity</title>
+		<script type="text/javascript" src="../script/api.js"></script>
+		<script type="text/javascript" src="../script/jquery-2.1.3.js"></script>
+		<script type="text/javascript" src="../script/mico_device_2.0.js"></script>
+		<style>
+			* {
+				margin: 0px;
+				padding: 0px;
+			}
+			body {
+				background-color: #EBEBEB;
+				background-size: cover;
+				font-family: "黑体";
+				font-size: 13px;
+			}
+			.content {
+				margin: 1px;
+				padding: 1px;
+			}
+			.content {
+				margin: 1px;
+				padding: 1px;
+			}
+			.pm25 {
+				margin: 5px 12px;
+				height: 114px;
+				background-color: #FFFFFF;
+				text-align: center;
+				box-shadow: 3px 3px 3px #e1e1e1;
+			}
+			.pm25 table tr td img {
+				height: 70px;
+			}
+			.pmtext {
+				font-size: 50px;
+				color: #F73A54;
+			}
+			.kongtiao {
+				margin: 5px 12px;
+				height: 114px;
+				background-color: #FFFFFF;
+				text-align: center;
+				box-shadow: 3px 3px 3px #e1e1e1;
+			}
+			.kongtiao table tr td img {
+				height: 70px;
+			}
+			.kttext {
+				font-size: 50px;
+				color: #27C17F;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="content">
+			<div class="pm25">
+				<table width="100%">
+					<tr align="center" height="114px">
+						<td valign="middle" width="100px"><img id="redimgid" src="../image/kongjing.png" alt=""></td>
+						<td id="greenbtnid" valign="middle">
+						<div class="pmtext">
+							153
+						</div></td>
+					</tr>
+				</table>
+			</div>
+			<div class="kongtiao">
+				<table width="100%">
+					<tr align="center" height="114px">
+						<td valign="middle" width="100px"><img id="redimgid" src="../image/kongtiao.png" alt=""></td>
+						<td id="greenbtnid" valign="middle">
+						<div class="kttext">
+							28℃
+						</div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</body>
+	<script>
+		apiready = function() {
+		};
+	</script>
+</html>

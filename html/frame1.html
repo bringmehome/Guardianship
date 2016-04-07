@@ -1,0 +1,250 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<title>Activity</title>
+		<script type="text/javascript" src="../script/api.js"></script>
+		<script type="text/javascript" src="../script/jquery-2.1.3.js"></script>
+		<script type="text/javascript" src="../script/mico_device_2.0.js"></script>
+		<style>
+			* {
+				margin: 0px;
+				padding: 0px;
+			}
+			body {
+				background-color: #EBEBEB;
+				background-size: cover;
+				font-family: "黑体";
+				font-size: 13px;
+			}
+			.content {
+				margin: 1px;
+				padding: 1px;
+			}
+			.title {
+				margin: 10px 12px 5px 12px;
+				background-color: #FFFFFF;
+				text-align: center;
+				padding: 7px 0;
+				box-shadow: 3px 3px 3px #e1e1e1;
+			}
+			.title span {
+				color: #000000;
+				font-size: 18px;
+				position: relative;
+			}
+			.rgbbtnshow {
+				margin: 5px 12px;
+				padding: 20px 0;
+				background-color: #FFFFFF;
+				text-align: center;
+				box-shadow: 3px 3px 3px #e1e1e1;
+			}
+			.rgbbtnshow img {
+				height: 130px;
+			}
+			.switrgbhow {
+				margin: 5px 12px;
+				height: 114px;
+				background-color: #FFFFFF;
+				text-align: center;
+				box-shadow: 3px 3px 3px #e1e1e1;
+			}
+			.switrgbhow table tr td img {
+				height: 70px;
+			}
+			.humihis table tr td img {
+				height: 70px;
+			}
+			.humihis {
+				margin: 5px 12px;
+				background-color: #FFFFFF;
+				text-align: center;
+				box-shadow: 3px 3px 3px #e1e1e1;
+			}
+			#backleft {
+				display: block;
+			}
+			#ax{
+				color:#F73A54;
+				font-weight: bolder;
+			}
+			#ay{
+				color:#27C17F;
+				font-weight: bolder;
+			}
+			#az{
+				color:#FFC600;
+				font-weight: bolder;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="content">
+			<div class="rgbbtnshow">
+				<img id="rgbshowimgid" src="../image/main_green.png" alt="">
+			</div>
+			<div class="switrgbhow">
+				<table width="100%">
+					<tr align="center" height="114px">
+						<td id="redbtnid" valign="middle"><img id="redimgid" src="../image/red_off.png" alt=""></td>
+						<td id="greenbtnid" valign="middle"><img id="greenimgid" src="../image/green_on.png" alt=""></td>
+						<td id="yellowbtnid" valign="middle"><img id="yellowimgid" src="../image/yellow_off.png" alt=""></td>
+					</tr>
+				</table>
+			</div>
+			<div class="humihis">
+				<table width="100%">
+					<tr align="center" height="50px">
+						<td valign="middle">X轴</td>
+						<td valign="middle">Y轴</td>
+						<td valign="middle">Z轴</td>
+					</tr>
+					<tr align="center" height="50px">
+						<td id="ax" valign="middle">-0.13g</td>
+						<td id="ay" valign="middle">-0.02g</td>
+						<td id="az" valign="middle">1.008g</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</body>
+	<script>
+		apiready = function() {
+			//			if (api.systemType != 'ios') {
+			//				api.addEventListener({
+			//					name : "keyback"
+			//				}, function(ret, err) {
+			//					checkpage();
+			//				});
+			//			}
+			initMQTT();
+		};
+		// 控制按钮显示的事件
+		var nowtag = "";
+		$("#rgbshowimgid").click(function() {
+			var swtimg = $("#rgbshowimgid").attr("src");
+			if ("../image/main_close.png" == swtimg) {
+				nowtag = "mainon";
+				imgswitch();
+				powerctrl("on");
+			} else {
+				nowtag = "mainoff";
+				imgswitch();
+				powerctrl("off");
+			}
+		});
+		//控制RGB的开关
+		function powerctrl(pwtag) {
+			var topic = device_id + '/in';
+			var command;
+			if ("on" == pwtag)
+				command = '{"rgbled_switch":true}';
+			else if ("off" == pwtag)
+				command = '{"rgbled_switch":false}';
+			publishcmd(topic, command);
+		}
+
+		//颜色按钮处理
+		$("#redbtnid").click(function() {
+			var swtimg = $("#redimgid").attr("src");
+			if ("../image/red_off.png" == swtimg) {
+				led_red();
+				nowtag = "redon";
+			} else {
+				nowtag = "redoff";
+			}
+			imgswitch();
+		});
+		$("#greenbtnid").click(function() {
+			var swtimg = $("#greenimgid").attr("src");
+			if ("../image/green_off.png" == swtimg) {
+				led_green();
+				nowtag = "greenon";
+			} else {
+				nowtag = "greenoff";
+			}
+			imgswitch();
+		});
+		$("#yellowbtnid").click(function() {
+			var swtimg = $("#yellowimgid").attr("src");
+			if ("../image/yellow_off.png" == swtimg) {
+				led_yellow();
+				nowtag = "yellowon";
+			} else {
+				nowtag = "yellowoff";
+			}
+			imgswitch();
+		});
+		//灯颜色判断
+		var rgbcolor;
+		function imgswitch() {
+			switch(nowtag) {
+				case "mainon":
+					if ("red" == rgbcolor) {
+						$("#rgbshowimgid").attr("src", "../image/main_red.png");
+					} else if ("green" == rgbcolor) {
+						$("#rgbshowimgid").attr("src", "../image/main_green.png");
+					} else if ("yellow" == rgbcolor) {
+						$("#rgbshowimgid").attr("src", "../image/main_yellow.png");
+					}
+					break;
+				case "mainoff":
+					$("#rgbshowimgid").attr("src", "../image/main_close.png");
+					break;
+				case "redon":
+					$("#redimgid").attr("src", "../image/red_on.png");
+					$("#greenimgid").attr("src", "../image/green_off.png");
+					$("#yellowimgid").attr("src", "../image/yellow_off.png");
+					$("#rgbshowimgid").attr("src", "../image/main_red.png");
+					rgbcolor = "red";
+					break;
+				case "redoff":
+					//$("#redimgid").attr("src", "../image/red_off.png");
+					break;
+				case "greenon":
+					$("#greenimgid").attr("src", "../image/green_on.png");
+					$("#redimgid").attr("src", "../image/red_off.png");
+					$("#yellowimgid").attr("src", "../image/yellow_off.png");
+					$("#rgbshowimgid").attr("src", "../image/main_green.png");
+					rgbcolor = "green";
+					break;
+				case "greenoff":
+					//$("#greenimgid").attr("src", "../image/green_off.png");
+					break;
+				case "yellowon":
+					$("#yellowimgid").attr("src", "../image/yellow_on.png");
+					$("#greenimgid").attr("src", "../image/green_off.png");
+					$("#redimgid").attr("src", "../image/red_off.png");
+					$("#rgbshowimgid").attr("src", "../image/main_yellow.png");
+					rgbcolor = "yellow";
+					break;
+				case "yellowoff":
+					//$("#yellowimgid").attr("src", "../image/yellow_off.png");
+					break;
+			}
+		}
+
+		function led_red() {
+			var topic = device_id + '/in';
+			var command = '{"rgbled_switch":true,"rgbled_hues":0, "rgbled_saturation":100, "rgbled_brightness":100}';
+			publishcmd(topic, command);
+			powerctrl("on");
+		}
+
+		function led_green() {
+			var topic = device_id + '/in';
+			var command = '{"rgbled_switch":true,"rgbled_hues":120, "rgbled_saturation":100, "rgbled_brightness":100}';
+			publishcmd(topic, command);
+			powerctrl("on");
+		}
+
+		function led_yellow() {
+			var topic = device_id + '/in';
+			var command = '{"rgbled_switch":true,"rgbled_hues":60, "rgbled_saturation":100, "rgbled_brightness":100}';
+			publishcmd(topic, command);
+			powerctrl("on");
+		}
+	</script>
+</html>
